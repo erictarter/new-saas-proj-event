@@ -38,7 +38,8 @@ export const useAuthStore = defineStore('auth', {
         this.setLoading(false)
       }
     },
-    async nuxtServerInit() {
+    async restoreAuthState() {
+      this.setLoading(true)
       return new Promise((resolve, reject) => {
         const unsubscribe = auth.onAuthStateChanged(
           (user) => {
@@ -48,7 +49,7 @@ export const useAuthStore = defineStore('auth', {
             resolve(user)
           },
           (error) => {
-            console.error('Auth state change error:', error)
+            console.error('Error restoring auth state:', error)
             this.setLoading(false)
             unsubscribe()
             reject(error)

@@ -23,7 +23,8 @@ definePageMeta({
 
 const vueLoaded = ref(false)
 
-onMounted(() => {
+onMounted(async () => {
+  await authStore.restoreAuthState()
   vueLoaded.value = true
 })
 
