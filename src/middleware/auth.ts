@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const protectedRoutes = ['/tasks', '/rsvp', '/polls', '/profile', '/plans']
 
   // Ensure the authentication state is restored before making any redirection decisions
-  await authStore.restoreAuthState()
+  // await authStore.restoreAuthState()
 
   // Watch for changes in the loading state
   return new Promise((resolve) => {
