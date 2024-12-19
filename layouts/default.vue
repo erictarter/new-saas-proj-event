@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <Header />
-    <main class="flex-grow container mx-auto flex justify-between items-center">
+    <main class="flex-grow w-full p-4">
       <slot />
     </main>
     <Footer />

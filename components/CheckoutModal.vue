@@ -16,7 +16,7 @@
                     <label for="cvv" class="block text-gray-700">CVV</label>
                     <input type="text" id="cvv" v-model="cvv" class="mt-2 block w-full border-gray-500 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2" required>
                 </div>
-                <button type="submit" class="bg-pink-500 text-white px-4 font-bold uppercase py-2 rounded hover:bg-pink-600">Proceed to Payment</button>
+                <button type="submit" class="bg-pink-500 text-white px-4 font-bold uppercase mr-3 py-2 rounded hover:bg-pink-600">Proceed to Payment</button>
                 <button type="button" @click="close" class="mt-4 bg-gray-500 font-bold uppercase text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
             </form>
         </div>
