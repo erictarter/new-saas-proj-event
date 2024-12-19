@@ -2,7 +2,7 @@
     <div class="p-4">
       <component :is="user ? 'HomeAuth' : 'HomeNonAuth'" />
       <HomeAuth v-if="user" />
-      <HomeNonAuth v-if="!user"/>
+      <HomeNonAuth v-else/>
     </div>
   </template>
   

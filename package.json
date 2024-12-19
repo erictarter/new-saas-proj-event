@@ -12,11 +12,13 @@
   "dependencies": {
     "@pinia/nuxt": "^0.9.0",
     "animate.css": "^4.1.1",
+    "firebase": "^11.1.0",
     "nuxt": "^3.14.1592",
     "vue": "latest",
     "vue-router": "latest"
   },
   "devDependencies": {
+    "@types/firebase": "^2.4.32",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17"

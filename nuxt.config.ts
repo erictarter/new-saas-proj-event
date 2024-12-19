@@ -15,7 +15,10 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ['~/assets/css/main.css', 'animate.css'],
+  css: [
+    '~/assets/css/main.css', 
+    'animate.css', 
+  ],
 
   modules: [
     '@pinia/nuxt',
@@ -32,5 +35,4 @@ export default defineNuxtConfig({
       FIREBASE_MEASUREMENT_ID: process.env.FIREBASE_MEASUREMENT_ID,
     },
   },
-
 })

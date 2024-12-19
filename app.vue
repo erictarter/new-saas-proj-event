@@ -12,4 +12,5 @@ import 'animate.css'
 
 <style>
 @import url("animate.css");
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 </style>
