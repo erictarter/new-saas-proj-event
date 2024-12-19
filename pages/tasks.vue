@@ -17,6 +17,11 @@
 import { defineComponent, ref } from 'vue';
 import TaskBoard from '~/components/TaskBoard.vue';
 import BudgetBoard from '~/components/BudgetBoard.vue';
+import authMiddleware from '../src/middleware/auth'
+
+definePageMeta({
+  middleware: authMiddleware
+})
 
 export default defineComponent({
     components: {

@@ -15,3 +15,7 @@ main {
   margin: 0 auto; /* Center horizontally */
   padding: 20px; /* Add padding */
 }
+
+.header-container {
+  max-width: 1200px;
+}

@@ -28,6 +28,11 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import CheckoutModal from '~/components/CheckoutModal.vue';
+import authMiddleware from '../src/middleware/auth'
+
+definePageMeta({
+  middleware: authMiddleware
+})
 
 export default defineComponent({
     name: 'PlansPage',

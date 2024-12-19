@@ -17,6 +17,11 @@
 import { defineComponent, ref } from 'vue';
 import NewPoll from '~/components/NewPoll.vue';
 import PollList from '~/components/PollList.vue';
+import authMiddleware from '../src/middleware/auth'
+
+definePageMeta({
+  middleware: authMiddleware
+})
 
 export default defineComponent({
     components: {

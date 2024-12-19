@@ -1,6 +1,6 @@
 <template>
   <header class="bg-gray-900 text-white p-4">
-    <div class="container mx-auto flex justify-between items-center">
+    <div class="container header-container mx-auto flex justify-between items-center">
       <nuxt-link to="/"><h1 class="text-2xl font-bold">EventFlow</h1></nuxt-link>
       <div class="flex items-center">
         <nav v-if="isAuthenticated" class="flex items-center space-x-6 text-gray-400">

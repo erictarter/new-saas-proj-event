@@ -51,6 +51,11 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { auth } from '~/plugins/firebase';
+import authMiddleware from '../src/middleware/auth'
+
+definePageMeta({
+  middleware: authMiddleware
+})
 
 interface Event {
     id: number;
