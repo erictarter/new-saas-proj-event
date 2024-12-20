@@ -1,11 +1,9 @@
 <template>
-  <div class="flex flex-col min-h-screen">
+  <div class="flex flex-col min-h-screen" :class="{ 'blurred': loading || !vueLoaded }">
     <Header />
-    <main class="flex-grow w-full p-4 relative">
+    <main class="flex-grow w-full p-4 relative"">
       <transition name="fade" mode="out-in">
-        <div :class="{ 'blurred': loading || !vueLoaded }">
           <NuxtPage />
-        </div>
       </transition>
       <LoadingSpinner v-if="loading || !vueLoaded" />
     </main>
@@ -30,6 +28,7 @@ const vueLoaded = ref(false)
 onMounted(async () => {
   await authStore.restoreAuthState()
   vueLoaded.value = true
+  console.log(authStore.getCurrentUser)
 })
 
 const loading = computed(() => authStore.isLoading)
@@ -51,5 +50,6 @@ const loading = computed(() => authStore.isLoading)
 .blurred {
   filter: blur(5px);
   transition: filter 0.3s;
+  width: 100vw !important;
 }
 </style>

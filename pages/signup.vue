@@ -21,8 +21,10 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../src/stores/auth'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { doc, setDoc } from 'firebase/firestore'
 import { useNuxtApp } from '#app'
 import type { Auth } from 'firebase/auth'
+import { db } from '~/plugins/firebase' // Adjust the import based on your project structure
 
 // Store
 const authStore = useAuthStore()
@@ -45,7 +47,8 @@ const signUpUser = async () => {
     const userCredential = await createUserWithEmailAndPassword($auth, email.value, password.value)
     const user = userCredential.user
     console.log('User signed up:', user)
-    authStore.setUser(user)
+    await setDoc(doc(db, 'users', user.uid), { subscriptionLevel: 'free' }) // Set default subscription level to 'free'
+    authStore.setUser(user, 'free')
     router.push('/')
   } catch (error) {
     console.error('Error signing up:', error)

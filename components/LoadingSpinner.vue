@@ -1,6 +1,6 @@
 <template>
     <div class="fixed inset-0 flex items-center loading-spinner justify-center bg-gray-800 bg-opacity-75 z-50">
-      <div class="loader"></div>
+      <div class="loader" style="z-index: 9999;"></div>
     </div>
   </template>
   

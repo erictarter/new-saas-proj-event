@@ -27,7 +27,7 @@
             {{ user?.email }}
             <i class="material-icons ml-2">expand_more</i>
           </button>
-          <div v-if="dropdownOpen" class="absolute right-0 mt-2 w-48 bg-white rounded shadow-lg">
+            <div v-if="dropdownOpen" class="absolute right-0 mt-2 w-48 bg-white rounded shadow-lg" style="z-index: 9999;">
             <nuxt-link to="/profile" class="block px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center space-x-1">
               <i class="material-icons">account_circle</i>
               <span>Profile</span>

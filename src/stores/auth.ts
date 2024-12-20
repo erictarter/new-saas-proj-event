@@ -4,12 +4,23 @@ import type { User } from 'firebase/auth'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null as null | { uid: string; email: string },
+    user: null as null | { uid: string; email: string; accessToken: string; emailVerified: boolean, subscriptionLevel: string },
     loading: false,
   }),
   actions: {
-    setUser(user: User | null) {
-      this.user = user ? { uid: user.uid, email: user.email } : null
+    async setUser(user: User | null, subscriptionLevel: string = 'free') {
+      if (user) {
+        const accessToken = await user.getIdToken()
+        this.user = { 
+          uid: user.uid, 
+          email: user.email, 
+          accessToken, 
+          emailVerified: user.emailVerified,
+          subscriptionLevel
+        }
+      } else {
+        this.user = null
+      }
     },
     setLoading(loading: boolean) {
       this.loading = loading
@@ -18,7 +29,8 @@ export const useAuthStore = defineStore('auth', {
       this.setLoading(true)
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password)
-        this.setUser(userCredential.user)
+        await this.setUser(userCredential.user)
+        console.log('User signed in:', userCredential.user)
       } catch (error) {
         console.error('Error signing in:', error)
         throw error
@@ -42,8 +54,12 @@ export const useAuthStore = defineStore('auth', {
       this.setLoading(true)
       return new Promise((resolve, reject) => {
         const unsubscribe = auth.onAuthStateChanged(
-          (user) => {
-            this.setUser(user)
+          async (user) => {
+            if (user) {
+              await this.setUser(user)
+            } else {
+              this.setUser(null)
+            }
             this.setLoading(false)
             unsubscribe()
             resolve(user)

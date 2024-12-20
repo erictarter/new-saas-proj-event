@@ -1,6 +1,6 @@
-import { initializeApp } from 'firebase/app'
-import { getAuth, setPersistence, browserLocalPersistence, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { initializeApp, getApps, getApp } from 'firebase/app'
+import { getAuth, setPersistence, browserLocalPersistence, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from 'firebase/auth'
+import { getFirestore, initializeFirestore, CACHE_SIZE_UNLIMITED } from 'firebase/firestore'
 import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 
 let auth: ReturnType<typeof getAuth>
@@ -25,9 +25,9 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // Initialize Firebase
   console.log('Initializing Firebase with config:', firebaseConfig)
-  const app = initializeApp(firebaseConfig)
+  const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
   auth = getAuth(app)
-  db = getFirestore(app)
+  db = !getApps().length ? initializeFirestore(app, { cacheSizeBytes: CACHE_SIZE_UNLIMITED }) : getFirestore(app)
 
   // Set persistence
   setPersistence(auth, browserLocalPersistence)
@@ -42,4 +42,4 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.provide('db', db)
 })
 
-export { auth, signInWithEmailAndPassword, signOut }
+export { auth, db, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword }

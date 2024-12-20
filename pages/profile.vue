@@ -51,6 +51,7 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { auth } from '~/plugins/firebase';
+import { useAuthStore } from '../src/stores/auth'
 import authMiddleware from '../src/middleware/auth'
 
 definePageMeta({
@@ -70,7 +71,9 @@ interface SubscriptionPlan {
 
 export default defineComponent({
     setup() {
-        const user = ref(auth.currentUser);
+
+        const user = useAuthStore().getCurrentUser;
+
         const pastEvents = ref<Event[]>([
             { id: 1, name: 'Event 1', date: '2023-01-01' },
             { id: 2, name: 'Event 2', date: '2023-02-01' },
@@ -80,14 +83,10 @@ export default defineComponent({
             { id: 2, name: 'Event 4', date: '2023-04-01' },
         ]);
         const subscriptionPlan = ref<SubscriptionPlan>({
-            name: 'Basic',
-            price: 0,
+            name: user.subscriptionLevel,
+            price: user.subscriptionLevel === 'free' ? 0 : user.subscriptionLevel === 'pro' ? 2.99 : 4.99, // Example pricing logic
         });
         const router = useRouter();
-
-        onMounted(() => {
-            user.value = auth.currentUser;
-        });
 
         const signOut = async () => {
             await auth.signOut();
