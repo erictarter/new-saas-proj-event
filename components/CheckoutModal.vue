@@ -25,6 +25,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
+import { useAuthStore } from '../src/stores/auth';
 
 export default defineComponent({
     props: {
@@ -41,6 +42,8 @@ export default defineComponent({
         const cardNumber = ref('');
         const expiryDate = ref('');
         const cvv = ref('');
+        const authStore = useAuthStore();
+        const user = authStore.getCurrentUser;
 
         const planColor = computed(() => {
             switch (props.plan.name) {
@@ -55,10 +58,22 @@ export default defineComponent({
             }
         });
 
-        const checkout = () => {
-            // Implement checkout logic here
-            alert(`Proceeding to payment with card number: ${cardNumber.value}`);
-            close();
+        const checkout = async () => {
+            if (user) {
+                const paymentInfo = {
+                    cardNumber: cardNumber.value,
+                    expiryDate: expiryDate.value,
+                    cvv: cvv.value,
+                };
+                try {
+                    // await authStore.updatePaymentInfo(paymentInfo);
+                    alert('Payment information updated successfully.');
+                    close();
+                } catch (error) {
+                    console.error('Error updating payment information:', error);
+                    alert('An error occurred while updating your payment information. Please try again.');
+                }
+            }
         };
 
         const close = () => {

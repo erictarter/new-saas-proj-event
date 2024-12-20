@@ -1,6 +1,6 @@
 <template>
     <div class="p-4 max-w-2xl mx-auto">
-        <h1 class="text-3xl font-bold mb-6">{{ user?.displayName || 'USER~NAME' }}</h1>
+        <h1 class="text-3xl font-bold mb-6">{{ user.email || 'USER~NAME' }}</h1>
 
         <!-- User Information Section -->
         <div class="bg-blue-100 p-6 rounded-lg shadow-lg mb-6 flex items-center">

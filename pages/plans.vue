@@ -2,7 +2,7 @@
     <div class="p-4 max-w-4xl mx-auto">
         <h1 class="text-3xl font-bold mb-6 text-center">Update Plan</h1>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
-            <div @click="openCheckoutModal('Free', 0)" :class="getCardClass('Free')" class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer h-full">
+            <div @click="openModal('Free', 0)" :class="getCardClass('Free')" class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer h-full">
                 <h3 class="text-2xl font-bold text-indigo-600">Free</h3>
                 <p class="mt-4 text-gray-600">Free</p>
                 <ul class="mt-4 text-gray-600 list-disc list-inside">
@@ -12,7 +12,7 @@
                     Current Plan
                 </div>
             </div>
-            <div @click="openCheckoutModal('Pro', 2.99)" :class="getCardClass('Pro')" class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer h-full">
+            <div @click="openModal('Pro', 2.99)" :class="getCardClass('Pro')" class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer h-full">
                 <h3 class="text-2xl font-bold text-teal-600">Pro</h3>
                 <p class="mt-4 text-gray-600">$2.99/month</p>
                 <ul class="mt-4 text-gray-600 list-disc list-inside">
@@ -24,7 +24,7 @@
                     Current Plan
                 </div>
             </div>
-            <div @click="openCheckoutModal('Enterprise', 4.99)" :class="getCardClass('Enterprise')" class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer h-full">
+            <div @click="openModal('Enterprise', 4.99)" :class="getCardClass('Enterprise')" class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer h-full">
                 <h3 class="text-2xl font-bold text-pink-600">Enterprise</h3>
                 <p class="mt-4 text-gray-600">$4.99/month</p>
                 <ul class="mt-4 text-gray-600 list-disc list-inside">
@@ -60,15 +60,19 @@ export default defineComponent({
         const selectedPlan = ref<{ name: string; price: number } | null>(null);
         const authStore = useAuthStore();
         const user = authStore.getCurrentUser;
+        const paymentInfo = true;
 
-        const openCheckoutModal = (name: string, price: number) => {
+        const openModal = (name: string, price: number) => {
+            if(user.subscriptionLevel === name.toLowerCase()){
+                return;
+            }
             selectedPlan.value = { name, price };
-            showModalCheckout.value = true;
-        };
-
-        const openUpgradeSubscriptionModal = (name: string, price: number) => {
-            selectedPlan.value = { name, price };
-            showModalSubscriptionUpdate.value = true;
+            // if (user.paymentInfo) {
+            if (paymentInfo) {
+                showModalSubscriptionUpdate.value = true;
+            } else {
+                showModalCheckout.value = true;
+            }
         };
 
         const closeModal = () => {
@@ -81,11 +85,10 @@ export default defineComponent({
         };
 
         return {
-            openCheckoutModal,
+            openModal,
             showModalCheckout,
             selectedPlan,
             showModalSubscriptionUpdate,
-            openUpgradeSubscriptionModal,
             closeModal,
             getCardClass,
             user,
