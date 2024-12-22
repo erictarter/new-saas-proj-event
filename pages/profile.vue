@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { auth } from '~/plugins/firebase';
 import { useAuthStore } from '../src/stores/auth'
@@ -71,8 +71,9 @@ interface SubscriptionPlan {
 
 export default defineComponent({
     setup() {
-
-        const user = useAuthStore().getCurrentUser;
+        const authStore = useAuthStore();
+        const user = authStore.getCurrentUser;
+        const appUser = authStore.getAppUser;
 
         const pastEvents = ref<Event[]>([
             { id: 1, name: 'Event 1', date: '2023-01-01' },
@@ -83,8 +84,8 @@ export default defineComponent({
             { id: 2, name: 'Event 4', date: '2023-04-01' },
         ]);
         const subscriptionPlan = ref<SubscriptionPlan>({
-            name: user.subscriptionLevel,
-            price: user.subscriptionLevel === 'free' ? 0 : user.subscriptionLevel === 'pro' ? 2.99 : 4.99, // Example pricing logic
+            name: appUser.subscriptionLevel,
+            price: appUser.subscriptionLevel === 'free' ? 0 : appUser.subscriptionLevel === 'pro' ? 2.99 : 4.99, // Example pricing logic
         });
         const router = useRouter();
 
@@ -95,6 +96,7 @@ export default defineComponent({
 
         return {
             user,
+            appUser,
             pastEvents,
             upcomingEvents,
             subscriptionPlan,

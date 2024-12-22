@@ -8,7 +8,7 @@
                 <ul class="mt-4 text-gray-600 list-disc list-inside">
                     <li>Basic features</li>
                 </ul>
-                <div v-if="user.subscriptionLevel === 'free'" class="mt-4 bg-indigo-500 text-white font-bold px-1 rounded text-center inline-block">
+                <div v-if="appUser.subscriptionLevel === 'free'" class="mt-4 bg-indigo-500 text-white font-bold px-1 rounded text-center inline-block">
                     Current Plan
                 </div>
             </div>
@@ -20,7 +20,7 @@
                     <li>Advanced RSVP management and reminders</li>
                     <li>Polling features</li>
                 </ul>
-                <div v-if="user.subscriptionLevel === 'pro'" class="mt-4 bg-teal-500 text-white font-bold px-1 rounded text-center inline-block">
+                <div v-if="appUser.subscriptionLevel === 'pro'" class="mt-4 bg-teal-500 text-white font-bold px-1 rounded text-center inline-block">
                     Current Plan
                 </div>
             </div>
@@ -32,13 +32,13 @@
                     <li>Exportable reports</li>
                     <li>Integrations with third-party tools like Google Calendar</li>
                 </ul>
-                <div v-if="user.subscriptionLevel === 'enterprise'" class="mt-4 bg-pink-500 text-white font-bold px-1 rounded text-center inline-block">
+                <div v-if="appUser.subscriptionLevel === 'enterprise'" class="mt-4 bg-pink-500 text-white font-bold px-1 rounded text-center inline-block">
                     Current Plan
                 </div>
             </div>
         </div>
         <CheckoutModal :show="showModalCheckout" :plan="selectedPlan" @close="closeModal" />
-        <UpdateSubscriptionModal :show="showModalSubscriptionUpdate" :plan="selectedPlan" :currentSubscription="user.subscriptionLevel" @close="closeModal" />
+        <UpdateSubscriptionModal :show="showModalSubscriptionUpdate" :plan="selectedPlan" :currentSubscription="appUser.subscriptionLevel" @close="closeModal" />
     </div>
 </template>
 
@@ -60,15 +60,14 @@ export default defineComponent({
         const selectedPlan = ref<{ name: string; price: number } | null>(null);
         const authStore = useAuthStore();
         const user = authStore.getCurrentUser;
-        const paymentInfo = true;
+        const appUser = authStore.getAppUser;
 
         const openModal = (name: string, price: number) => {
-            if(user.subscriptionLevel === name.toLowerCase()){
+            if(appUser.subscriptionLevel === name.toLowerCase()){
                 return;
             }
             selectedPlan.value = { name, price };
-            // if (user.paymentInfo) {
-            if (paymentInfo) {
+            if (appUser.paymentInfo) {
                 showModalSubscriptionUpdate.value = true;
             } else {
                 showModalCheckout.value = true;
@@ -81,7 +80,7 @@ export default defineComponent({
         };
 
         const getCardClass = (planName: string) => {
-            return user.subscriptionLevel === planName.toLowerCase() ? 'opacity-50' : 'opacity-100';
+            return appUser.subscriptionLevel === planName.toLowerCase() ? 'opacity-50' : 'opacity-100';
         };
 
         return {
@@ -92,6 +91,7 @@ export default defineComponent({
             closeModal,
             getCardClass,
             user,
+            appUser,
         };
     },
 });

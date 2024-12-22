@@ -11,60 +11,61 @@
         </div>
       </div>
     </div>
-  </template>
-  
-  <script lang="ts">
-  import { defineComponent, type PropType } from 'vue';
-  import { useAuthStore } from '../src/stores/auth';
-  import { doc, updateDoc } from 'firebase/firestore';
-  import { db } from '~/plugins/firebase'; // Adjust the import based on your project structure
-  
-  export default defineComponent({
-    name: 'UpdateSubscriptionModal',
-    props: {
-      show: {
-        type: Boolean,
-        required: true,
-      },
-      plan: {
-        type: Object as PropType<{ name: string; price: number }>,
-        required: true,
-      },
-      currentSubscription: {
-        type: String,
-        required: true,
-      },
+</template>
+
+<script lang="ts">
+import { defineComponent, type PropType } from 'vue';
+import { useAuthStore } from '../src/stores/auth';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '~/plugins/firebase'; // Adjust the import based on your project structure
+
+export default defineComponent({
+  name: 'UpdateSubscriptionModal',
+  props: {
+    show: {
+      type: Boolean,
+      required: true,
     },
-    setup(props, { emit }) {
-      const authStore = useAuthStore();
-      const user = authStore.getCurrentUser;
-  
-      const close = () => {
-        emit('close');
-      };
-  
-      const confirmChange = async () => {
-        if (user) {
-          try {
-            await updateDoc(doc(db, 'users', user.uid), { subscriptionLevel: props.plan.name.toLowerCase() });
-            // authStore.setUser({ ...user, subscriptionLevel: props.plan.name.toLowerCase() });
-            alert(`Your subscription has been updated to ${props.plan.name}.`);
-            close();
-          } catch (error) {
-            console.error('Error updating subscription:', error);
-            alert('An error occurred while updating your subscription. Please try again.');
-          }
+    plan: {
+      type: Object as PropType<{ name: string; price: number }>,
+      required: true,
+    },
+    currentSubscription: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props, { emit }) {
+    const authStore = useAuthStore();
+    const user = authStore.getCurrentUser;
+    const appUser = authStore.getAppUser;
+
+    const close = () => {
+      emit('close');
+    };
+
+    const confirmChange = async () => {
+      if (user) {
+        try {
+          await updateDoc(doc(db, 'users', user.uid), { subscriptionLevel: props.plan.name.toLowerCase() });
+          appUser.subscriptionLevel = props.plan.name.toLowerCase();
+          alert(`Your subscription has been updated to ${props.plan.name}.`);
+          close();
+        } catch (error) {
+          console.error('Error updating subscription:', error);
+          alert('An error occurred while updating your subscription. Please try again.');
         }
-      };
-  
-      return {
-        close,
-        confirmChange,
-      };
-    },
-  });
-  </script>
-  
-  <style scoped>
-  /* Add any necessary styles here */
-  </style>
+      }
+    };
+
+    return {
+      close,
+      confirmChange,
+    };
+  },
+});
+</script>
+
+<style scoped>
+/* Add any necessary styles here */
+</style>

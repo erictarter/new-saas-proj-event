@@ -1,25 +1,67 @@
 import { defineStore } from 'pinia'
 import { auth, signInWithEmailAndPassword, signOut } from '~/plugins/firebase'
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import { db } from '~/plugins/firebase' // Adjust the import based on your project structure
 import type { User } from 'firebase/auth'
+
+interface AuthUser {
+  uid: string;
+  email: string | null;
+  emailVerified: boolean;
+  accessToken: string;
+}
+
+interface AppUser {
+  subscriptionLevel: string;
+  paymentInfo: any;
+  rsvp: any;
+  tasks: any;
+  polls: any;
+  events: any;
+}
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null as null | { uid: string; email: string; accessToken: string; emailVerified: boolean, subscriptionLevel: string },
+    authUser: null as null | AuthUser,
+    appUser: null as null | AppUser,
     loading: false,
   }),
   actions: {
-    async setUser(user: User | null, subscriptionLevel: string = 'free') {
+    async setUser(user: User | null) {
       if (user) {
         const accessToken = await user.getIdToken()
-        this.user = { 
+        this.authUser = { 
           uid: user.uid, 
           email: user.email, 
-          accessToken, 
           emailVerified: user.emailVerified,
-          subscriptionLevel
+          accessToken
         }
+        await this.fetchAppUser(user.uid)
       } else {
-        this.user = null
+        this.authUser = null
+        this.appUser = null
+      }
+    },
+    async fetchAppUser(uid: string) {
+      const userDoc = await getDoc(doc(db, 'users', uid))
+      if (userDoc.exists()) {
+        this.appUser = userDoc.data() as AppUser
+      } else {
+        this.appUser = {
+          subscriptionLevel: 'free',
+          paymentInfo: null,
+          rsvp: null,
+          tasks: null,
+          polls: null,
+          events: null
+        }
+        await setDoc(doc(db, 'users', uid), this.appUser)
+      }
+    },
+    async updatePaymentInfo(paymentInfo: any) {
+      if (this.authUser) {
+        this.appUser.paymentInfo = paymentInfo
+        await updateDoc(doc(db, 'users', this.authUser.uid), { paymentInfo })
       }
     },
     setLoading(loading: boolean) {
@@ -75,8 +117,9 @@ export const useAuthStore = defineStore('auth', {
     },
   },
   getters: {
-    isAuthenticated: (state) => !!state.user,
-    getCurrentUser: (state) => state.user,
+    isAuthenticated: (state) => !!state.authUser,
+    getCurrentUser: (state) => state.authUser,
+    getAppUser: (state) => state.appUser,
     isLoading: (state) => state.loading,
   },
 })

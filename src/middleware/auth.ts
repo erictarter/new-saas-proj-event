@@ -5,6 +5,7 @@ import { watchEffect } from 'vue'
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const authStore = useAuthStore()
   const protectedRoutes = ['/tasks', '/rsvp', '/polls', '/profile', '/plans']
+  const verificationRoute = '/verification'
 
   // Ensure the authentication state is restored before making any redirection decisions
   // await authStore.restoreAuthState()
@@ -13,8 +14,13 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   return new Promise((resolve) => {
     const stopWatching = watchEffect((onInvalidate) => {
       if (!authStore.isLoading) {
+        const user = authStore.getCurrentUser
         if (!authStore.isAuthenticated && protectedRoutes.includes(to.path)) {
           resolve(navigateTo('/signin'))
+        } else if (user && !user.emailVerified && (protectedRoutes.includes(to.path) || to.path !== verificationRoute)) {
+          resolve(navigateTo(verificationRoute))
+        } else if (user && user.emailVerified && to.path === verificationRoute) {
+          resolve(navigateTo('/'))
         } else {
           resolve(true)
         }

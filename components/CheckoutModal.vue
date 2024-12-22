@@ -66,7 +66,7 @@ export default defineComponent({
                     cvv: cvv.value,
                 };
                 try {
-                    // await authStore.updatePaymentInfo(paymentInfo);
+                    await authStore.updatePaymentInfo(paymentInfo);
                     alert('Payment information updated successfully.');
                     close();
                 } catch (error) {

@@ -13,6 +13,9 @@
       <button type="submit" class="bg-indigo-500 text-white px-4 py-2 uppercase font-bold rounded hover:bg-indigo-600 w-full">Sign Up</button>
     </form>
     <p class="mt-4">Already have an account? <nuxt-link to="/signin" class="text-blue-500 hover:underline">Sign In</nuxt-link></p>
+    <div v-if="verificationMessage" class="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+      <span class="block font-bold sm:inline">{{ verificationMessage }}</span>
+    </div>
   </div>
 </template>
 
@@ -20,11 +23,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../src/stores/auth'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
 import { useNuxtApp } from '#app'
 import type { Auth } from 'firebase/auth'
-import { db } from '~/plugins/firebase' // Adjust the import based on your project structure
+import { db } from '~/plugins/firebase' // Ensure correct import
 
 // Store
 const authStore = useAuthStore()
@@ -35,6 +38,9 @@ const password = ref('')
 
 // Error message
 const errorMessage = ref('')
+
+// Verification message
+const verificationMessage = ref('')
 
 // Router
 const router = useRouter()
@@ -47,9 +53,19 @@ const signUpUser = async () => {
     const userCredential = await createUserWithEmailAndPassword($auth, email.value, password.value)
     const user = userCredential.user
     console.log('User signed up:', user)
-    await setDoc(doc(db, 'users', user.uid), { subscriptionLevel: 'free' }) // Set default subscription level to 'free'
-    authStore.setUser(user, 'free')
-    router.push('/')
+    await setDoc(doc(db, 'users', user.uid), { 
+      subscriptionLevel: 'free',
+      paymentInfo: null,
+      rsvp: null,
+      tasks: null,
+      polls: null,
+      events: null
+    }) // Set default subscription level to 'free' and initialize other fields
+    await sendEmailVerification(user)
+    verificationMessage.value = 'A verification email has been sent to your email address. Please verify your email before logging in.'
+    setTimeout(() => {
+      router.push('/verification')
+    }, 5000)
   } catch (error) {
     console.error('Error signing up:', error)
     if (error.code === 'auth/email-already-in-use') {

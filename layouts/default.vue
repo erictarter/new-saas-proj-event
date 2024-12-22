@@ -1,14 +1,14 @@
 <template>
-  <div class="flex flex-col min-h-screen" :class="{ 'blurred': loading || !vueLoaded }">
+  <div class="flex flex-col min-h-screen z-75" :class="{ 'blurred': loading || !vueLoaded }">
     <Header />
     <main class="flex-grow w-full p-4 relative"">
       <transition name="fade" mode="out-in">
           <NuxtPage />
       </transition>
-      <LoadingSpinner v-if="loading || !vueLoaded" />
     </main>
     <Footer />
   </div>
+  <LoadingSpinner v-if="loading || !vueLoaded" />
 </template>
 
 <script setup lang="ts">
