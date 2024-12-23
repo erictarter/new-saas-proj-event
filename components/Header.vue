@@ -24,7 +24,7 @@
         <div v-if="isAuthenticated" class="relative ml-4">
           <button @click="toggleDropdown" class="flex items-center bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700">
             <i class="material-icons mr-2">account_circle</i>
-            {{ user?.email }}
+            {{ userEmail }}
             <i class="material-icons ml-2">expand_more</i>
           </button>
             <div v-if="dropdownOpen" class="absolute right-0 mt-2 w-48 bg-white rounded shadow-lg" style="z-index: 9999;">
@@ -42,6 +42,10 @@
           <i class="material-icons mr-1">login</i>
           <strong>SIGN IN</strong>
         </nuxt-link>
+        <nuxt-link v-if="needsVerification" to="/verification" class="ml-4 bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 flex items-center space-x-1">
+          <i class="material-icons mr-1">warning</i>
+          <strong>VERIFY EMAIL</strong>
+        </nuxt-link>
       </div>
     </div>
   </header>
@@ -55,8 +59,17 @@ import { useAuthStore } from '../src/stores/auth'
 const authStore = useAuthStore()
 
 // Computed Properties
-const user = computed(() => authStore.user)
-const isAuthenticated = computed(() => !!authStore.user)
+const user = computed(() => authStore.getCurrentUser)
+const isAuthenticated = computed(() => !!authStore.getCurrentUser && authStore.getCurrentUser.emailVerified)
+const userEmail = computed(() => {
+  const currentUser = authStore.getCurrentUser
+  return currentUser && currentUser.emailVerified ? currentUser.email : ''
+})
+
+const needsVerification = computed(() => {
+  const currentUser = authStore.getCurrentUser
+  return currentUser && !currentUser.emailVerified
+})
 
 // Dropdown state
 const dropdownOpen = ref(false)

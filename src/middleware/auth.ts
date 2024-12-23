@@ -6,6 +6,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const authStore = useAuthStore()
   const protectedRoutes = ['/tasks', '/rsvp', '/polls', '/profile', '/plans']
   const verificationRoute = '/verification'
+  const nonAuthRoutes = ['/signin', '/signup', '/']
 
   // Ensure the authentication state is restored before making any redirection decisions
   // await authStore.restoreAuthState()
@@ -17,10 +18,12 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         const user = authStore.getCurrentUser
         if (!authStore.isAuthenticated && protectedRoutes.includes(to.path)) {
           resolve(navigateTo('/signin'))
-        } else if (user && !user.emailVerified && (protectedRoutes.includes(to.path) || to.path !== verificationRoute)) {
+        } else if (user && !user.emailVerified && protectedRoutes.includes(to.path)) {
           resolve(navigateTo(verificationRoute))
         } else if (user && user.emailVerified && to.path === verificationRoute) {
           resolve(navigateTo('/'))
+        } else if (user && !user.emailVerified && nonAuthRoutes.includes(to.path)) {
+          resolve(true)
         } else {
           resolve(true)
         }

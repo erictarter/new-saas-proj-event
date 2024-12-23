@@ -45,8 +45,21 @@ const verificationMessage = ref('')
 // Router
 const router = useRouter()
 
+// Password validation function
+const validatePassword = (password: string) => {
+  const minLength = 8
+  const hasUpperCase = /[A-Z]/.test(password)
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password)
+  return password.length >= minLength && hasUpperCase && hasSpecialChar
+}
+
 // Sign-up function
 const signUpUser = async () => {
+  if (!validatePassword(password.value)) {
+    errorMessage.value = 'Password must be at least 8 characters long and include an uppercase letter and a special character.'
+    return
+  }
+
   try {
     const nuxtApp = useNuxtApp()
     const $auth = nuxtApp.$auth as Auth
@@ -65,7 +78,7 @@ const signUpUser = async () => {
     verificationMessage.value = 'A verification email has been sent to your email address. Please verify your email before logging in.'
     setTimeout(() => {
       router.push('/verification')
-    }, 5000)
+    }, 3500)
   } catch (error) {
     console.error('Error signing up:', error)
     if (error.code === 'auth/email-already-in-use') {
