@@ -1,6 +1,11 @@
 <template>
   <div class="flex flex-col min-h-screen z-75" :class="{ 'blurred': loading || !vueLoaded }">
-    <Header />
+    <div class="hidden lg:block">
+      <Header />
+    </div>
+    <div class="block lg:hidden">
+      <MobileHeader />
+    </div>
     <main class="flex-grow w-full p-4 relative"">
       <transition name="fade" mode="out-in">
           <NuxtPage />
