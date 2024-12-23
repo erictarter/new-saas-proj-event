@@ -17,6 +17,7 @@
       <span class="block font-bold sm:inline">{{ verificationMessage }}</span>
     </div>
   </div>
+  <LoadingSpinner v-if="loading" />
 </template>
 
 <script setup lang="ts">
@@ -35,6 +36,7 @@ const authStore = useAuthStore()
 // Form data
 const email = ref('')
 const password = ref('')
+const loading = ref(false);
 
 // Error message
 const errorMessage = ref('')
@@ -44,6 +46,7 @@ const verificationMessage = ref('')
 
 // Router
 const router = useRouter()
+
 
 // Password validation function
 const validatePassword = (password: string) => {
@@ -60,6 +63,8 @@ const signUpUser = async () => {
     return
   }
 
+  loading.value = true
+
   try {
     const nuxtApp = useNuxtApp()
     const $auth = nuxtApp.$auth as Auth
@@ -75,12 +80,14 @@ const signUpUser = async () => {
       events: null
     }) // Set default subscription level to 'free' and initialize other fields
     await sendEmailVerification(user)
+    loading.value = false
     verificationMessage.value = 'A verification email has been sent to your email address. Please verify your email before logging in.'
     setTimeout(() => {
       router.push('/verification')
     }, 3500)
   } catch (error) {
     console.error('Error signing up:', error)
+    loading.value = false
     if (error.code === 'auth/email-already-in-use') {
       errorMessage.value = 'An account with this email already exists.'
     } else {

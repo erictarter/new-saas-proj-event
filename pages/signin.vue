@@ -43,6 +43,12 @@ const signInUser = async () => {
     const user = userCredential.user
     console.log('User signed in:', user)
 
+    // Check if email is verified
+    if (!user.emailVerified) {
+      errorMessage.value = 'Please verify your email before signing in.'
+      return
+    }
+
     // Fetch user data from Firestore
     const userDoc = await getDoc(doc(db, 'users', user.uid))
     if (userDoc.exists()) {

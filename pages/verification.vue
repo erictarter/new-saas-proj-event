@@ -10,6 +10,9 @@
       <i class="material-icons mr-2">check_circle_outline</i>
       <span class="block font-bold sm:inline">{{ successMessage }}</span>
     </div>
+    <div v-if="successMessage" class="mt-12 text-center">
+        <nuxt-link to="/" class="block w-full px-6 py-3 text-white rounded bg-pink-500 shadow hover:bg-pink-600"><strong>Get Started</strong></nuxt-link>
+    </div>
   </div>
 </template>
 
@@ -37,10 +40,7 @@ const pollEmailVerification = async () => {
       userEmail.value = user.email || ''
       await user.reload()
       if (user.emailVerified) {
-        successMessage.value = 'Your email has been verified. You can now log in.'
-        setTimeout(() => {
-          router.push('/signin')
-        }, 3000)
+        successMessage.value = 'Your email has been verified! You can now access yout EventFlow profile.'
       } else {
         setTimeout(pollEmailVerification, 5000)
       }
