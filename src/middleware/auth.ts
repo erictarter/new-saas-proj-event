@@ -8,10 +8,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const verificationRoute = '/verification'
   const nonAuthRoutes = ['/signin', '/signup', '/']
 
-  // Ensure the authentication state is restored before making any redirection decisions
-  // await authStore.restoreAuthState()
 
-  // Watch for changes in the loading state
+  // if (to.path === from.path) {
+  //   return
+  // }
+
   return new Promise((resolve) => {
     const stopWatching = watchEffect((onInvalidate) => {
       if (!authStore.isLoading) {

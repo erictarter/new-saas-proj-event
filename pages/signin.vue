@@ -13,6 +13,7 @@
       <button type="submit" class="bg-indigo-500 text-white px-4 py-2 rounded uppercase font-bold hover:bg-indigo-600 w-full">Sign In</button>
     </form>
     <p class="mt-4">Don't have an account? <nuxt-link to="/signup" class="text-blue-500 hover:underline">Sign Up</nuxt-link></p>
+    <nuxt-link to="/forgot-password" class="mt-1 text-blue-500 hover:underline">Forgot Password?</nuxt-link>
   </div>
 </template>
 
@@ -22,7 +23,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../src/stores/auth'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
-import { db, auth } from '~/plugins/firebase' // Ensure correct import
+import { db, auth } from '~/plugins/firebase'
 
 const errorMessage = ref('')
 
@@ -33,31 +34,30 @@ const authStore = useAuthStore()
 const email = ref('')
 const password = ref('')
 
-// Router
 const router = useRouter()
 
-// Sign-in function
 const signInUser = async () => {
+  authStore.setLoading(true);  
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value)
     const user = userCredential.user
-    console.log('User signed in:', user)
 
-    // Check if email is verified
     if (!user.emailVerified) {
       errorMessage.value = 'Please verify your email before signing in.'
+      authStore.setLoading(false);  
       return
     }
 
-    // Fetch user data from Firestore
     const userDoc = await getDoc(doc(db, 'users', user.uid))
     if (userDoc.exists()) {
       console.log('User data:', userDoc.data())
       authStore.setUser(user)
+      authStore.setLoading(false);  
       router.push('/')
     } else {
       console.log('No such document!')
       errorMessage.value = 'No user data found. Please contact support.'
+      authStore.setLoading(false);  
     }
   } catch (error) {
     console.error('Error signing in:', error)
@@ -66,10 +66,10 @@ const signInUser = async () => {
     } else {
       errorMessage.value = 'An error occurred during sign-in. Please try again.'
     }
+    authStore.setLoading(false);  
   }
 }
 
-// Close alert function
 const closeAlert = () => {
   errorMessage.value = ''
 }
